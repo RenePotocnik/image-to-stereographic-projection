@@ -30,7 +30,7 @@ def progress_update(y: int, height: int, prefix='Progress', suffix='', length=50
 
 img, img_name = get_image()
 img = img.rotate(180)
-img = img.resize((img.height, img.height))
+img = img.resize((img.width, img.width))
 imgX = img.width
 imgY = img.height
 
