@@ -1,7 +1,7 @@
 import math
+import time
 import tkinter
 from tkinter import filedialog
-from typing import Tuple
 
 from PIL import Image
 
@@ -38,13 +38,14 @@ new_image = Image.new("RGB", (imgX, imgY))
 
 rscale = imgX / (math.sqrt(imgX ** 2 + imgY ** 2) / 2)
 tscale = imgY / (2 * math.pi)
-
+imgY_h, imgX_h = imgY / 2, imgX / 2
+s_time = time.time()
 for y in range(0, imgY):
-    dy = y - imgY / 2
+    dy = y - imgY_h
     progress_update(y=y, height=img.height, prefix="Converting", suffix="", length=50)
 
     for x in range(0, imgX):
-        dx = x - imgX / 2
+        dx = x - imgX_h
         t = int(math.atan2(dy, dx) % (2 * math.pi) * tscale)
         r = int(math.sqrt(dx ** 2 + dy ** 2) * rscale)
 
@@ -56,6 +57,7 @@ for y in range(0, imgY):
             col = b * 65536 + g * 256 + r
             new_image.putpixel((x, y), col)
 
+print("Processing time:", round(time.time() - s_time, 3), "sec")
 new_image_name = f"{img_name[0]}_new.png"
 new_image.save(new_image_name, "PNG")
 input(f"\nNew image saved as '{new_image_name}'")
