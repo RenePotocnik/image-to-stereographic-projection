@@ -1,2 +1,11 @@
-# image-to-stereographic-projection
-Convert an image to stereographic projection (Polar Coordinates)
+# Convert Images to a Stereographic Projection
+Works best with 360-degree panoramic photos.\
+The script converts them to look like a tiny planet.
+
+----
+
+Original image:
+![Original panoramic image](example_image.jpg)
+
+Converted image:
+![Converted image with stereographic projection](example_image_new.png)
