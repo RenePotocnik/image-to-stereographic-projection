@@ -8,4 +8,4 @@ Original image:
 ![Original panoramic image](example_image.jpg)
 
 Converted image:
-![Converted image with stereographic projection](example_image_new.png)
+![Converted image with stereographic projection](new_example_image.jpg)
