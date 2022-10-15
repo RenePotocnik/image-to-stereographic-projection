@@ -9,6 +9,7 @@ from PIL import Image
 def get_image():
     """
     Open file explorer window to select 'png/jpg' image
+
     :return: Image and the image name
     """
     print("Open image", end="\r")
@@ -27,6 +28,7 @@ def progress_update(y: int, height: int,
                     length=50):
     """
     Displays a progress bar in the console
+
     :param y: The current `y` value of the process
     :param height: The entire height/last `y`
     :param prefix: Text that appears before the progress bar
@@ -49,6 +51,7 @@ def to_stereographic_projection(img: Image,
                                 open_image: bool = True):
     """
     Convert the image into a stereographic_projection
+
     :param img: Image to be converted.
     :param scale_to_width: Should the image be scaled to its width instead of its height.
     Image is higher resolution, but greatly increases processing time.
@@ -61,8 +64,10 @@ def to_stereographic_projection(img: Image,
     img = img.resize((img.width, img.width) if scale_to_width else (img.height, img.height))
     img_x = img.width
     img_y = img.height
+    img_data = img.load()
 
     new_image = Image.new("RGB", (img_x, img_y))
+    new_image_data = new_image.load()
 
     rscale = img_x / (math.sqrt(img_x ** 2 + img_y ** 2) / 2)
     tscale = img_y / (2 * math.pi)
@@ -79,13 +84,14 @@ def to_stereographic_projection(img: Image,
 
             if 0 <= t < img_x and 0 <= r < img_y:
                 try:
-                    r, g, b = img.getpixel((t, r))
+                    r, g, b = img_data[t, r]
                 except ValueError:
-                    r, g, b, _ = img.getpixel((t, r))
+                    r, g, b, _ = img_data[t, r]
                 col = b * 65536 + g * 256 + r
-                new_image.putpixel((x, y), col)
+                # new_image.putpixel((x, y), col)
+                new_image_data[x, y] = col
 
-    print("Processing time:", round(time.time() - s_time, 3), "sec")
+    print("Processing time:", round(time.time() - s_time, 3), "sec", " " * 50)
     new_image_name = f"new_{img_name}"
     if save_image:
         new_image.save(new_image_name, "PNG")
