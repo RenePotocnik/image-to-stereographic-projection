@@ -22,7 +22,8 @@ def get_image():
     return img, img_name
 
 
-def progress_update(y: int, height: int,
+def progress_update(y: int,
+                    height: int,
                     prefix='Progress',
                     suffix='',
                     length=50):
@@ -36,11 +37,9 @@ def progress_update(y: int, height: int,
     :param length: The length of the progress bar
     """
     completed = int(length * y // height)
-    empty = length - completed
-    bar = "#" * completed + " " * empty
-    percent = f"{100 * (y / float(height)):.2f}"
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end="\r")
-    if y == height:
+    print(f'\r{prefix} |{"#" * completed + " " * (length - completed)}| {100 * (y / float(height)):.2f}% {suffix}     ',
+          end="\r")
+    if y >= height - 5:
         print(" " * (length + 30), end="\r")
 
 
@@ -72,14 +71,15 @@ def to_stereographic_projection(img: Image,
     rscale = img_x / (math.sqrt(img_x ** 2 + img_y ** 2) / 2)
     tscale = img_y / (2 * math.pi)
     img_y_h, img_x_h = img_y / 2, img_x / 2
+    pi2 = 2 * math.pi
     s_time = time.time()
     for y in range(0, img_y):
         dy = y - img_y_h
-        progress_update(y=y, height=img.height, prefix="Converting", suffix="", length=50)
+        progress_update(y=y, height=img_y, prefix="Converting", suffix="", length=50)
 
         for x in range(0, img_x):
             dx = x - img_x_h
-            t = int(math.atan2(dy, dx) % (2 * math.pi) * tscale)
+            t = int(math.atan2(dy, dx) % pi2 * tscale)
             r = int(math.sqrt(dx ** 2 + dy ** 2) * rscale)
 
             if 0 <= t < img_x and 0 <= r < img_y:
@@ -88,10 +88,9 @@ def to_stereographic_projection(img: Image,
                 except ValueError:
                     r, g, b, _ = img_data[t, r]
                 col = b * 65536 + g * 256 + r
-                # new_image.putpixel((x, y), col)
                 new_image_data[x, y] = col
 
-    print("Processing time:", round(time.time() - s_time, 3), "sec", " " * 50)
+    print("Processing time:", round(time.time() - s_time, 3), "sec")
     new_image_name = f"new_{img_name}"
     if save_image:
         new_image.save(new_image_name, "PNG")
@@ -104,4 +103,4 @@ def to_stereographic_projection(img: Image,
 
 if __name__ == '__main__':
     image, image_name = get_image()
-    to_stereographic_projection(img=image, scale_to_width=True, img_name=image_name, save_image=True, open_image=True)
+    to_stereographic_projection(img=image, scale_to_width=False, img_name=image_name, save_image=True, open_image=True)
